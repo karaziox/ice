@@ -70,6 +70,22 @@ func NewCandidateRelay(config *CandidateRelayConfig) (*CandidateRelay, error) {
 	}, nil
 }
 
+func (c *CandidateRelay) LocalPreference() uint16 {
+	relayPreference := uint16(0)
+	switch c.relayProtocol {
+	case "tls":
+	case "dtls":
+		relayPreference = 2
+	case tcp:
+		relayPreference = 1
+	case udp:
+	default:
+		relayPreference = 0
+	}
+
+	return c.candidateBase.LocalPreference() + relayPreference
+}
+
 // RelayProtocol returns the protocol used between the endpoint and the relay server.
 func (c *CandidateRelay) RelayProtocol() string {
 	return c.relayProtocol
